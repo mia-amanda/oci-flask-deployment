@@ -1,0 +1,22 @@
+name: Deploy to Oracle Cloud using Docker Hub and Podman
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up OCI CLI
+      run: |
+        sudo dnf install -y oraclelinux-release-el7
+        sudo dnf install -y oraclelinux-developer-release-el7
+        sudo yum-config-manager --enable ol7_developer
+        sudo yum install -y oracle-instantclient-release-el7
+        sudo pip3 install oci-cli
