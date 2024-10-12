@@ -28,7 +28,9 @@ jobs:
     - name: Configure OCI CLI
       run: |
         mkdir -p ~/.oci
-        echo "${{ secrets.ORACLE_PRIVATE_KEY }}" | base64 -d > ~/.oci/oci_api_key.pem
+        # Encode the private key from secrets before using it
+        echo "${{ secrets.ORACLE_PRIVATE_KEY }}" | base64 > ~/.oci/oci_api_key.pem.base64
+        base64 -d ~/.oci/oci_api_key.pem.base64 > ~/.oci/oci_api_key.pem
         chmod 600 ~/.oci/oci_api_key.pem
         oci_env/bin/oci setup config --config-file ~/.oci/config --region ${{ secrets.ORACLE_REGION }} --key-file ~/.oci/oci_api_key.pem
       env:
