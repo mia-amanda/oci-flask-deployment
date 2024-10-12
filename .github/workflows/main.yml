@@ -28,8 +28,10 @@ jobs:
     - name: Configure OCI CLI
       run: |
         mkdir -p ~/.oci
-        # Write the private key to a file
-        echo "${{ secrets.ORACLE_PRIVATE_KEY }}" | base64 -d > ~/.oci/oci_api_key.pem
+        
+        # Decode the base64 encoded private key and write it to a file
+        echo "${{ secrets.ORACLE_PRIVATE_KEY }}" | base64 -d > ~/.oci/oci_api_key.pem || echo "Error decoding base64 key."
+        
         chmod 600 ~/.oci/oci_api_key.pem
     
         # Manually create the OCI config file
@@ -40,4 +42,11 @@ jobs:
         echo "region=${{ secrets.ORACLE_REGION }}" >> ~/.oci/config
         echo "key_file=~/.oci/oci_api_key.pem" >> ~/.oci/config
         chmod 600 ~/.oci/config
+      env:
+        ORACLE_TENANCY_OCID: ${{ secrets.ORACLE_TENANCY_OCID }}
+        ORACLE_USER_OCID: ${{ secrets.ORACLE_USER_OCID }}
+        ORACLE_REGION: ${{ secrets.ORACLE_REGION }}
+        ORACLE_COMPARTMENT_OCID: ${{ secrets.ORACLE_COMPARTMENT_OCID }}
+        ORACLE_FINGERPRINT: ${{ secrets.ORACLE_FINGERPRINT }}
+
 
