@@ -29,8 +29,8 @@ jobs:
       run: |
         mkdir -p ~/.oci
         
-        # Decode the base64 encoded private key and write it to a file
-        echo "${{ secrets.ORACLE_PRIVATE_KEY }}" | base64 -d > ~/.oci/oci_api_key.pem || echo "Error decoding base64 key."
+        # Write the plain text private key to a file
+        echo "${{ secrets.ORACLE_PRIVATE_KEY }}" > ~/.oci/oci_api_key.pem
         
         chmod 600 ~/.oci/oci_api_key.pem
     
@@ -66,14 +66,11 @@ jobs:
         # Create the .ssh directory if it doesn't exist
         mkdir -p ~/.ssh
 
-        # Ensure the private key is correctly formatted and written to a file
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" | base64 -d > ~/.ssh/id_rsa || echo "Error decoding SSH key."
+        # Write the plain text SSH private key directly to the file
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         
         # Set the correct permissions
         chmod 600 ~/.ssh/id_rsa
-
-        # Verify the key file exists and display the first few lines for debugging
-        head -n 3 ~/.ssh/id_rsa || echo "SSH key file not found or unreadable."
 
         # SSH into the OCI compute instance
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa opc@129.150.35.184 \
