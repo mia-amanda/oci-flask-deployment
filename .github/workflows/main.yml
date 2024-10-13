@@ -63,6 +63,9 @@ jobs:
 
     - name: Deploy Flask App via SSH
       run: |
+        # Create the .ssh directory if it doesn't exist
+        mkdir -p ~/.ssh
+
         # Add the SSH private key
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
@@ -78,8 +81,8 @@ jobs:
           sudo firewall-cmd --reload && \
           
           # Pull Docker image using Podman and run the container
-          podman pull docker.io/${{ secrets.DOCKER_USERNAME }}/oci-flask-deployment-app:latest && \
-          podman run -d -p 5000:5000 docker.io/${{ secrets.DOCKER_USERNAME }}/oci-flask-deployment-app:latest
+          podman pull docker.io/${{ secrets.DOCKER_USERNAME }}/your-app:latest && \
+          podman run -d -p 5000:5000 docker.io/${{ secrets.DOCKER_USERNAME }}/your-app:latest
           "
 
 
