@@ -85,16 +85,19 @@ jobs:
           fi
           
           # Pull Docker image using Podman
-          podman pull docker.io/${{ secrets.DOCKER_USERNAME }}/oci-flask-deployment-app:latest
+          podman pull ${{ secrets.DOCKER_USERNAME }}/oci-flask-deployment-app:latest
           
           # Check if the container is already running, stop it if it is
           if podman ps -q --filter "name=oci-flask-deployment-app"; then
             podman stop oci-flask-deployment-app
             podman rm oci-flask-deployment-app
           fi
+
+          # Migrate the Podman system storage (if necessary)
+          podman system migrate
           
           # Run the container
-          podman run -d --name oci-flask-deployment-app --restart always -p 5000:5000 docker.io/${{ secrets.DOCKER_USERNAME }}/oci-flask-deployment-app:latest
+          podman run -d --name oci-flask-deployment-app --restart always -p 5000:5000 ${{ secrets.DOCKER_USERNAME }}/oci-flask-deployment-app:latest
           
           # Output Podman logs for the container
           echo "Podman logs for oci-flask-deployment-app:"
