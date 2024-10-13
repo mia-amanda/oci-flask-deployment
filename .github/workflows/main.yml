@@ -83,8 +83,8 @@ jobs:
           sudo firewall-cmd --reload && \
           
           # Pull Docker image using Podman and run the container
-          podman pull docker.io/${{ secrets.DOCKER_USERNAME }}/your-app:latest && \
-          podman run -d -p 5000:5000 docker.io/${{ secrets.DOCKER_USERNAME }}/your-app:latest
+          podman pull docker.io/${{ secrets.DOCKER_USERNAME }}/oci-flask-deployment-app:latest && \
+          podman run -d --restart always -p 5000:5000 docker.io/${{ secrets.DOCKER_USERNAME }}/oci-flask-deployment-app:latest
           "
 
 
