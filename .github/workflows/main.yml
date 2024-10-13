@@ -56,10 +56,32 @@ jobs:
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
     
         # Build Docker Image
-        docker build -t "${{ secrets.DOCKER_USERNAME }}/your-app:latest" .
+        docker build -t "${{ secrets.DOCKER_USERNAME }}/oci-flask-deployment-app:latest" .
     
         # Push Docker Image
-        docker push "${{ secrets.DOCKER_USERNAME }}/your-app:latest"
+        docker push "${{ secrets.DOCKER_USERNAME }}/oci-flask-deployment-app:latest"
+
+    - name: Deploy Flask App via SSH
+      run: |
+        # Add the SSH private key
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+    
+        # SSH into the OCI compute instance
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa opc@129.150.35.184 \
+          "
+          # Install Podman
+          sudo dnf install -y podman && \
+          
+          # Allow port 5000 in the firewall
+          sudo firewall-cmd --permanent --add-port=5000/tcp && \
+          sudo firewall-cmd --reload && \
+          
+          # Pull Docker image using Podman and run the container
+          podman pull docker.io/${{ secrets.DOCKER_USERNAME }}/oci-flask-deployment-app:latest && \
+          podman run -d -p 5000:5000 docker.io/${{ secrets.DOCKER_USERNAME }}/oci-flask-deployment-app:latest
+          "
+
 
         
 
