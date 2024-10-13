@@ -49,4 +49,19 @@ jobs:
         ORACLE_COMPARTMENT_OCID: ${{ secrets.ORACLE_COMPARTMENT_OCID }}
         ORACLE_FINGERPRINT: ${{ secrets.ORACLE_FINGERPRINT }}
 
+    - name: Build and Push Docker image to Docker Hub
+      run: |
+    
+        # Login to Docker Hub
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+    
+        # Build Docker Image
+        docker build -t "${{ secrets.DOCKER_USERNAME }}/your-app:latest" .
+    
+        # Push Docker Image
+        docker push "${{ secrets.DOCKER_USERNAME }}/your-app:latest"
+
+        
+
+
 
